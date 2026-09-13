@@ -1,4 +1,9 @@
 const Product = require("../models/Product");
+const mongoose = require("mongoose");
+
+const isValid = (id) => {
+  return mongoose.Types.ObjectId.isValid(id);
+};
 
 const createProduct = async (req, res) => {
   try {
@@ -41,6 +46,12 @@ const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid product ID",
+      });
+    }
+
     const product = await Product.findById(id);
 
     if (!product) {
@@ -65,6 +76,12 @@ const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid product ID",
+      });
+    }
+
     const { name, price, category } = req.body;
 
     const updateData = {};
@@ -79,6 +96,12 @@ const updateProduct = async (req, res) => {
 
     if (category !== undefined) {
       updateData.category = category;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        message: "At least one field is required for update",
+      });
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
@@ -107,6 +130,12 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid product ID",
+      });
+    }
 
     const deletedProduct = await Product.findByIdAndDelete(id);
 
