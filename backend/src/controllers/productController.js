@@ -9,6 +9,24 @@ const createProduct = async (req, res) => {
   try {
     const { name, price, category } = req.body;
 
+    if (!name) {
+      return res.status(400).json({
+        message: "Name is required",
+      });
+    }
+
+    if (price === undefined) {
+      return res.status(400).json({
+        message: "Price is required",
+      });
+    }
+
+    if (!category) {
+      return res.status(400).json({
+        message: "category is required",
+      });
+    }
+
     const product = await Product.create({
       name,
       price,
